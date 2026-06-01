@@ -50,6 +50,25 @@ public class Proyectil {
 		return DetectarColisiones.circuloConRectangulo(x, y, radio, rectX, rectY, rectAncho, rectAlto);
 	}
 
+	public boolean colisionaConEnemigo(Enemigos e) {
+		if(e==null) {
+			return false;
+		}
+	
+		double xCercano = Math.max(e.bordeIzquierdo(), Math.min(this.x, e.bordeDerecho()));
+		double yCercano = Math.max(e.bordeSuperior(), Math.min(this.y, e.bordeInferior()));
+		
+		double alto= yCercano - this.y;
+		double ancho= xCercano - this.x;
+		double distancia = (int) Math.sqrt( Math.pow(alto, 2) + Math.pow(ancho, 2));
+		
+		if(distancia <= (this.radio)) {
+			return true;
+		}else {
+			return false;
+		}		
+	}
+	
 	public double getX() {
 		return x;
 	}

@@ -9,6 +9,12 @@ public class Juego extends InterfaceJuego {
 	private Entorno entorno;
 	// Personaje que controlará el jugador.
 	private Personaje personaje;
+	
+	// Inicio arreglo de enemigos e items
+	private Enemigos[] e;
+	private int minEnemigos = 8;
+	private Item[] item;
+	private int proximoItem = 0;
 
 	// Plataformas de prueba para probar movimiento y salto del personaje.
 	private Plataforma plataformaIzquierda;
@@ -23,6 +29,8 @@ public class Juego extends InterfaceJuego {
 		this.entorno = new Entorno(this, "Proyecto para TP", 800, 600);
 
 		this.personaje = new Personaje(400, 300, 30, 50);
+		e = new Enemigos[15];
+		item = new Item[4];
 
 		// Plataforma de prueba.
 		// Agujero a la derecha, entre x=500 y x=620.
@@ -81,6 +89,101 @@ public class Juego extends InterfaceJuego {
 
 		// Dibuja las vidas que restan todavía
 		dibujarVidas();
+		
+		// Creacion enemigos
+		int contadorVivos = 0;
+		for (int i = 0; i < e.length; i++) {
+			if (e[i] != null) {
+				contadorVivos++;
+			}
+		}
+
+		if (contadorVivos < minEnemigos) {
+			for (int i = 0; i < e.length; i++) {
+				if (e[i] == null) {
+					e[i] = new Enemigos(entorno.ancho(), entorno.alto()); 
+					break; // Sino se llena de enemigos
+				}
+			}
+		}
+
+		// Mover, dibujar
+		for (int i = 0; i < e.length; i++) {
+			if (e[i] != null) {
+				e[i].mover();
+				e[i].dibujar(entorno);
+				
+				// Colision con disparo
+				if(personaje.getDisparo() != null && personaje.getDisparo().colisionaConEnemigo(e[i])) {
+					if (Math.random() < 0.35) {
+						item[proximoItem] = new Item(e[i].getX(), e[i].getY());
+						proximoItem = (proximoItem + 1) % 4;
+					}
+					e[i] = null;
+					personaje.setDisparo(null);
+				}
+				
+				// Colision con disparo triple
+				if(personaje.getDisparosTriples() != null) {
+					Proyectil[] especial = personaje.getDisparosTriples();
+					
+					//recorremos el arreglo de disparos
+					for(int k = 0; k < especial.length; k++) {
+						if (especial[k] != null && especial[k].colisionaConEnemigo(e[i])) {
+							if (Math.random() < 0.35) {
+								item[proximoItem] = new Item(e[i].getX(), e[i].getY());
+								proximoItem = (proximoItem + 1) % 4;
+							}
+							e[i] = null;
+							especial[k] = null;
+						}
+					}
+						
+				}	
+						
+				// Colision con plataforma
+				if (plataformaIzquierda != null && e[i] != null) {
+					if (e[i].colisionaPorIzquierda(plataformaIzquierda) || e[i].colisionaPorDerecha(plataformaIzquierda)){
+						e[i] = null;
+					}	
+				}
+				
+				if (plataformaDerecha != null && e[i] != null) {
+					if (e[i].colisionaPorIzquierda(plataformaDerecha) || e[i].colisionaPorDerecha(plataformaDerecha)){
+						e[i] = null;
+					}	
+				}
+						
+				// Colision con princesa
+				if (e[i] != null) {
+					if (e[i].colisionaPorIzquierda(personaje) || e[i].colisionaPorDerecha(personaje) || e[i].colisionaPorArriba(personaje) || e[i].colisionaPorAbajo(personaje)){
+						e[i] = null;
+						personaje.perderVida(); // la princesa pierde una vida
+					}
+				}
+									
+				// Si sale de la pantalla se vuelve null
+				if (e[i] != null) {
+					if (e[i].seFueDePantalla(entorno)) {
+						e[i] = null;
+					}	
+				}
+			}	
+		}	
+						
+		// Dropeo de item 
+				
+		for (int j = 0; j < item.length; j++) {
+			if (item[j] != null) {
+				item[j].dibujar(entorno);
+			
+				// Verificamos si la princesa lo toca para recolectarlo
+				if (item[j].colisionaConPersonaje(personaje)) {
+					personaje.sumarVida(); 				
+					item[j] = null;
+				}	
+			}
+		}
 	}
 
 	private void revisarPlataformas() {
@@ -120,4 +223,5 @@ public class Juego extends InterfaceJuego {
 
 	public static void main(String[] args) {
 		new Juego();
-	}}
+	}
+}

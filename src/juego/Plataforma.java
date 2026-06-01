@@ -21,6 +21,15 @@ public class Plataforma {
 		entorno.dibujarRectangulo(x, y, ancho, alto, 0, Color.GRAY);
 	}
 
+	public double bordeDerecho() {
+		return this.x + this.ancho / 2;
+	}
+	public double bordeIzquierdo() {
+		return this.x - this.ancho / 2;
+	}
+	public double bordeInferior() {
+		return this.y + this.alto / 2;
+	}
 	public double bordeSuperior() {
 		return y - alto / 2;
 	}

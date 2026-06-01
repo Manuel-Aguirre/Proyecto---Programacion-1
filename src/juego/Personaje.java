@@ -155,6 +155,12 @@ public class Personaje {
 			vidas--;
 		}
 	}
+	
+	public void sumarVida() {
+		if (vidas < 8) {
+			vidas++;
+		}
+	}
 
 	public void reiniciarPosicion(double nuevaX, double nuevaY) {
 		x = nuevaX;
@@ -226,5 +232,13 @@ public class Personaje {
 
 	public Proyectil getDisparo() {
 		return disparo;
+	}
+	
+	public Proyectil[] getDisparosTriples() {
+		return disparosTriples;
+	}
+	
+	public void setDisparo(Proyectil disparo) {
+		this.disparo = disparo;
 	}
 }
