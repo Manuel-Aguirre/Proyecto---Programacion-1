@@ -234,6 +234,10 @@ public class Personaje {
 		return disparo;
 	}
 	
+	public Proyectil[] getDisparosTriples() {
+		return disparosTriples;
+	}
+	
 	public void setDisparo(Proyectil disparo) {
 		this.disparo = disparo;
 	}

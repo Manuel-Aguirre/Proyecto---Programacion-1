@@ -113,7 +113,7 @@ public class Juego extends InterfaceJuego {
 				e[i].mover();
 				e[i].dibujar(entorno);
 				
-				// Colision con disparo y disparo triple
+				// Colision con disparo
 				if(personaje.getDisparo() != null && personaje.getDisparo().colisionaConEnemigo(e[i])) {
 					if (Math.random() < 0.35) {
 						item[proximoItem] = new Item(e[i].getX(), e[i].getY());
@@ -122,15 +122,24 @@ public class Juego extends InterfaceJuego {
 					e[i] = null;
 					personaje.setDisparo(null);
 				}
-				/*
-				if(personaje.getDisparosTriples() != null && personaje.getDisparosTriples().colisionaConEnemigo(e[i])) {
-					if (Math.random() < 0.35) {
-						item[proximoItem] = new Item(e[i].getX(), e[i].getY());
-						proximoItem = (proximoItem + 1) % 4;
+				
+				// Colision con disparo triple
+				if(personaje.getDisparosTriples() != null) {
+					Proyectil[] especial = personaje.getDisparosTriples();
+					
+					//recorremos el arreglo de disparos
+					for(int k = 0; k < especial.length; k++) {
+						if (especial[k] != null && especial[k].colisionaConEnemigo(e[i])) {
+							if (Math.random() < 0.35) {
+								item[proximoItem] = new Item(e[i].getX(), e[i].getY());
+								proximoItem = (proximoItem + 1) % 4;
+							}
+							e[i] = null;
+							especial[k] = null;
+						}
 					}
-					e[i] = null;
-					personaje.setDisparosTriples(null);
-				}*/	
+						
+				}	
 						
 				// Colision con plataforma
 				if (plataformaIzquierda != null && e[i] != null) {
